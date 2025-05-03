@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akıllı Müşteri Segmentasyonu ve Veri Analizi Platformu</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <header class="bg-gradient-to-r from-blue-600 to-indigo-800 text-white shadow-lg">
+        <div class="container mx-auto py-6 px-4">
+            <h1 class="text-3xl font-bold mb-2">Akıllı Müşteri Segmentasyonu ve Veri Analizi Platformu</h1>
+            <p class="text-blue-100">OpenAI API destekli dinamik müşteri analizi ve pazarlama önerileri</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto py-8 px-4">
+        <!-- File Upload Section -->
+        <section class="mb-12 bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Veri Yükleme</h2>
+            <div class="flex flex-col md:flex-row items-start gap-8">
+                <div class="w-full md:w-1/2">
+                    <div class="border-2 border-dashed border-blue-300 rounded-lg p-8 text-center bg-blue-50 hover:bg-blue-100 transition-colors cursor-pointer" id="dropZone">
+                        <i class="fas fa-cloud-upload-alt text-5xl text-blue-500 mb-4"></i>
+                        <p class="text-gray-700 mb-2">Dosyanızı sürükleyip bırakın veya seçin</p>
+                        <p class="text-sm text-gray-500 mb-4">CSV, Excel, JSON formatları desteklenir</p>
+                        <input type="file" id="fileInput" class="hidden" accept=".csv,.xlsx,.xls,.json">
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-md transition-colors" id="browseButton">
+                            Dosya Seç
+                        </button>
+                    </div>
+                    <div class="mt-4 flex justify-between items-center">
+                        <p class="text-sm text-gray-600" id="fileInfo">Henüz dosya seçilmedi</p>
+                        <button class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded-md transition-colors hidden" id="analyzeButton">
+                            Analiz Et
+                        </button>
+                    </div>
+                </div>
+
+                <div class="w-full md:w-1/2 mt-6 md:mt-0">
+                    <div class="bg-gray-100 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold mb-3 flex items-center">
+                            <i class="fas fa-cog text-gray-600 mr-2"></i> 
+                            Analiz Ayarları
+                        </h3>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Segment Sayısı</label>
+                            <select id="clusterCount" class="w-full rounded-md border-gray-300 shadow-sm py-2 px-3 bg-white border">
+                                <option value="3">3 Segment</option>
+                                <option value="4">4 Segment</option>
+                                <option value="5" selected>5 Segment</option>
+                                <option value="6">6 Segment</option>
+                                <option value="7">7 Segment</option>
+                                <option value="auto">Otomatik Belirle</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">API Entegrasyonu</label>
+                            <div class="relative">
+                                <input type="text" id="apiKey" placeholder="OpenAI API Key" class="w-full rounded-md border-gray-300 shadow-sm py-2 px-3 bg-white border">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                    <i class="fas fa-key text-gray-400"></i>
+                                </div>
+                            </div>
+                            <p class="mt-1 text-xs text-gray-500">Akıllı analiz için OpenAI API anahtarı gereklidir</p>
+                        </div>
+
+                        <div class="flex items-center mb-2">
+                            <input type="checkbox" id="advancedAnalysis" class="rounded text-blue-600 mr-2" checked>
+                            <label for="advancedAnalysis" class="text-sm text-gray-700">Gelişmiş Segment Analizi</label>
+                        </div>
+
+                        <div class="flex items-center">
+                            <input type="checkbox" id="marketingRecommendations" class="rounded text-blue-600 mr-2" checked>
+                            <label for="marketingRecommendations" class="text-sm text-gray-700">Pazarlama Önerileri Oluştur</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading Indicator -->
+        <div id="loadingSection" class="hidden">
+            <div class="flex flex-col items-center justify-center p-10 mb-12 bg-white rounded-lg shadow-md">
+                <div class="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+                <p class="text-lg text-gray-700 font-medium" id="loadingText">Veri analiz ediliyor...</p>
+                <p class="text-sm text-gray-500 mt-2" id="loadingSubText">Bu işlem birkaç dakika sürebilir</p>
+                <div class="w-full max-w-md bg-gray-200 rounded-full h-2.5 mt-4">
+                    <div class="bg-blue-600 h-2.5 rounded-full" id="progressBar" style="width: 10%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Preview Section -->
+        <section id="dataPreviewSection" class="mb-12 bg-white rounded-lg shadow-md p-6 hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-gray-800">Veri Önizleme</h2>
+                <div class="flex items-center">
+                    <span class="text-sm text-gray-500 mr-2">Satır sayısı: <span id="rowCount" class="font-medium">0</span></span>
+                    <span class="text-sm text-gray-500 ml-2">Sütun sayısı: <span id="columnCount" class="font-medium">0</span></span>
+                </div>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200" id="dataPreviewTable">
+                    <thead class="bg-gray-50">
+                        <tr id="tableHeader"></tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200" id="tableBody">
+                    </tbody>
+                </table>
+            </div>
+            
+            <p class="mt-4 text-sm text-gray-500">İlk 10 satır gösteriliyor. Tüm veri seti üzerinde analiz yapılacaktır.</p>
+        </section>
+
+        <!-- Segmentation Results -->
+        <section id="segmentationSection" class="mb-12 bg-white rounded-lg shadow-md p-6 hidden">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Segmentasyon Sonuçları</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Segment Distribution Chart -->
+                <div class="bg-gray-50 rounded-lg p-4 shadow-sm">
+                    <h3 class="text-lg font-semibold mb-3">Segment Dağılımı</h3>
+                    <div class="aspect-w-4 aspect-h-3">
+                        <canvas id="segmentDistributionChart" class="w-full h-full"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Segment Feature Importance -->
+                <div class="bg-gray-50 rounded-lg p-4 shadow-sm">
+                    <h3 class="text-lg font-semibold mb-3">Önemli Özellikler</h3>
+                    <div class="aspect-w-4 aspect-h-3">
+                        <canvas id="featureImportanceChart" class="w-full h-full"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8">
+                <h3 class="text-lg font-semibold mb-4">Segment Profilleri</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="segmentProfiles">
+                    <!-- Segment cards will be generated here dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Marketing Recommendations Section -->
+        <section id="recommendationsSection" class="mb-12 bg-white rounded-lg shadow-md p-6 hidden">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Pazarlama Stratejisi Önerileri</h2>
+            
+            <div id="recommendationsTabs" class="border-b border-gray-200 mb-6">
+                <!-- Tabs will be generated here dynamically -->
+            </div>
+            
+            <div id="recommendationsContent">
+                <!-- Recommendations content will be generated here dynamically -->
+            </div>
+        </section>
+
+        <!-- Final Report -->
+        <section id="reportSection" class="mb-12 bg-white rounded-lg shadow-md p-6 hidden">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Analiz Özeti ve Rapor</h2>
+            
+            <div class="prose max-w-none">
+                <div id="reportContent">
+                    <!-- Report will be generated here dynamically -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-gray-300">
+        <div class="container mx-auto py-8 px-4">
+            <div class="flex flex-col md:flex-row justify-between">
+                <div class="mb-6 md:mb-0">
+                    <h3 class="text-xl font-semibold text-white mb-3">Akıllı Müşteri Segmentasyonu</h3>
+                    <p class="text-gray-400 max-w-md">OpenAI API destekli dinamik müşteri segmentasyonu ve pazarlama stratejisi önerileri platformu.</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold text-white mb-3">Desteklenen Formatlar</h4>
+                    <ul class="text-gray-400">
+                        <li class="mb-1"><i class="far fa-file-alt mr-2"></i> CSV dosyaları</li>
+                        <li class="mb-1"><i class="far fa-file-excel mr-2"></i> Excel dosyaları (.xlsx, .xls)</li>
+                        <li><i class="far fa-file-code mr-2"></i> JSON dosyaları</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-8 border-t border-gray-700 pt-6 text-center text-sm text-gray-500">
+                <p>© 2023 Akıllı Müşteri Segmentasyonu ve Veri Analizi Platformu. Tüm hakları saklıdır.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Global variables
+        let currentData = null;
+        let segmentResults = null;
+        let recommendationResults = null;
+        const segmentColors = [
+            'rgba(255, 99, 132, 0.8)',
+            'rgba(54, 162, 235, 0.8)',
+            'rgba(255, 206, 86, 0.8)',
+            'rgba(75, 192, 192, 0.8)',
+            'rgba(153, 102, 255, 0.8)',
+            'rgba(255, 159, 64, 0.8)',
+            'rgba(199, 199, 199, 0.8)',
+            'rgba(83, 102, 255, 0.8)',
+            'rgba(40, 159, 64, 0.8)',
+            'rgba(210, 199, 199, 0.8)',
+        ];
+
+        // Elements
+        const fileInput = document.getElementById('fileInput');
+        const dropZone = document.getElementById('dropZone');
+        const browseButton = document.getElementById('browseButton');
+        const fileInfo = document.getElementById('fileInfo');
+        const analyzeButton = document.getElementById('analyzeButton');
+        const loadingSection = document.getElementById('loadingSection');
+        const loadingText = document.getElementById('loadingText');
+        const loadingSubText = document.getElementById('loadingSubText');
+        const progressBar = document.getElementById('progressBar');
+        const dataPreviewSection = document.getElementById('dataPreviewSection');
+        const segmentationSection = document.getElementById('segmentationSection');
+        const recommendationsSection = document.getElementById('recommendationsSection');
+        const reportSection = document.getElementById('reportSection');
+        const rowCount = document.getElementById('rowCount');
+        const columnCount = document.getElementById('columnCount');
+        const tableHeader = document.getElementById('tableHeader');
+        const tableBody = document.getElementById('tableBody');
+        const segmentProfiles = document.getElementById('segmentProfiles');
+        const recommendationsTabs = document.getElementById('recommendationsTabs');
+        const recommendationsContent = document.getElementById('recommendationsContent');
+        const reportContent = document.getElementById('reportContent');
+        const apiKeyInput = document.getElementById('apiKey');
+        
+        // Event listeners
+        browseButton.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        dropZone.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-blue-500');
+        });
+        
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('border-blue-500');
+        });
+        
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-blue-500');
+            
+            if (e.dataTransfer.files.length) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+        
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length) {
+                handleFile(fileInput.files[0]);
+            }
+        });
+        
+        analyzeButton.addEventListener('click', () => {
+            if (currentData) {
+                analyzeData();
+            }
+        });
+        
+        // File handling function
+        function handleFile(file) {
+            const fileName = file.name;
+            const fileType = fileName.split('.').pop().toLowerCase();
+            
+            // Reset UI
+            resetUI();
+            fileInfo.textContent = `Seçilen dosya: ${fileName}`;
+            analyzeButton.classList.remove('hidden');
+            
+            // Parse file based on its type
+            if (fileType === 'csv') {
+                parseCSV(file);
+            } else if (fileType === 'xlsx' || fileType === 'xls') {
+                parseExcel(file);
+            } else if (fileType === 'json') {
+                parseJSON(file);
+            } else {
+                fileInfo.textContent = 'Desteklenmeyen dosya formatı. Lütfen CSV, Excel veya JSON dosyası yükleyin.';
+                fileInfo.classList.add('text-red-500');
+                analyzeButton.classList.add('hidden');
+            }
+        }
+        
+        // Parse CSV file
+        function parseCSV(file) {
+            Papa.parse(file, {
+                header: true,
+                dynamicTyping: true,
+                complete: function(results) {
+                    currentData = results.data;
+                    displayPreview();
+                },
+                error: function(error) {
+                    console.error('CSV parsing error:', error);
+                    fileInfo.textContent = 'CSV dosyası ayrıştırılırken hata oluştu.';
+                    fileInfo.classList.add('text-red-500');
+                }
+            });
+        }
+        
+        // Parse Excel file
+        function parseExcel(file) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const data = e.target.result;
+                const workbook = XLSX.read(data, { type: 'binary' });
+                
+                // Get first sheet
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+                
+                // Convert to JSON
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                
+                // Convert to array of objects with headers
+                const headers = jsonData[0];
+                currentData = jsonData.slice(1).map(row => {
+                    const rowData = {};
+                    headers.forEach((header, index) => {
+                        rowData[header] = row[index];
+                    });
+                    return rowData;
+                });
+                
+                displayPreview();
+            };
+            
+            reader.onerror = function() {
+                fileInfo.textContent = 'Excel dosyası okunurken hata oluştu.';
+                fileInfo.classList.add('text-red-500');
+            };
+            
+            reader.readAsBinaryString(file);
+        }
+        
+        // Parse JSON file
+        function parseJSON(file) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const jsonData = JSON.parse(e.target.result);
+                    
+                    // Handle both array of objects or object with arrays
+                    if (Array.isArray(jsonData)) {
+                        currentData = jsonData;
+                    } else {
+                        // Try to convert object to array of objects
+                        const keys = Object.keys(jsonData);
+                        if (keys.length > 0 && Array.isArray(jsonData[keys[0]])) {
+                            // Object with arrays structure
+                            const arrayLength = jsonData[keys[0]].length;
+                            currentData = [];
+                            
+                            for (let i = 0; i < arrayLength; i++) {
+                                const item = {};
+                                keys.forEach(key => {
+                                    item[key] = jsonData[key][i];
+                                });
+                                currentData.push(item);
+                            }
+                        } else {
+                            // Single object structure, convert to array with one item
+                            currentData = [jsonData];
+                        }
+                    }
+                    
+                    displayPreview();
+                } catch (error) {
+                    console.error('JSON parsing error:', error);
+                    fileInfo.textContent = 'JSON dosyası ayrıştırılırken hata oluştu.';
+                    fileInfo.classList.add('text-red-500');
+                }
+            };
+            
+            reader.onerror = function() {
+                fileInfo.textContent = 'JSON dosyası okunurken hata oluştu.';
+                fileInfo.classList.add('text-red-500');
+            };
+            
+            reader.readAsText(file);
+        }
+        
+        // Display data preview
+        function displayPreview() {
+            if (!currentData || currentData.length === 0) {
+                return;
+            }
+            
+            // Show data preview section
+            dataPreviewSection.classList.remove('hidden');
+            
+            // Update counts
+            rowCount.textContent = currentData.length;
+            
+            // Get columns from the first item
+            const columns = Object.keys(currentData[0]);
+            columnCount.textContent = columns.length;
+            
+            // Clear existing table
+            tableHeader.innerHTML = '';
+            tableBody.innerHTML = '';
+            
+            // Add header row
+            columns.forEach(column => {
+                const th = document.createElement('th');
+                th.textContent = column;
+                th.className = 'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider';
+                tableHeader.appendChild(th);
+            });
+            
+            // Add data rows (limited to 10)
+            const previewData = currentData.slice(0, 10);
+            previewData.forEach(row => {
+                const tr = document.createElement('tr');
+                
+                columns.forEach(column => {
+                    const td = document.createElement('td');
+                    td.textContent = row[column] !== null && row[column] !== undefined ? row[column] : '';
+                    td.className = 'px-6 py-4 whitespace-nowrap text-sm text-gray-500';
+                    tr.appendChild(td);
+                });
+                
+                tableBody.appendChild(tr);
+            });
+            
+            // Enable analyze button
+            analyzeButton.classList.remove('hidden');
+        }
+        
+        // Analyze data
+        function analyzeData() {
+            if (!currentData || currentData.length === 0) {
+                return;
+            }
+            
+            // Show loading section
+            loadingSection.classList.remove('hidden');
+            analyzeButton.disabled = true;
+            
+            // Start the analysis process
+            simulateAnalysis()
+                .then(() => {
+                    // Hide loading section
+                    loadingSection.classList.add('hidden');
+                    analyzeButton.disabled = false;
+                    
+                    // Perform actual analysis
+                    performSegmentation();
+                    generateRecommendations();
+                    generateReport();
+                    
+                    // Show results sections
+                    segmentationSection.classList.remove('hidden');
+                    recommendationsSection.classList.remove('hidden');
+                    reportSection.classList.remove('hidden');
+                    
+                    // Scroll to results
+                    segmentationSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                })
+                .catch(error => {
+                    console.error('Analysis error:', error);
+                    loadingSection.classList.add('hidden');
+                    analyzeButton.disabled = false;
+                    alert('Veri analizi sırasında bir hata oluştu. Lütfen tekrar deneyin.');
+                });
+        }
+        
+        // Simulate analysis process with progress updates
+        function simulateAnalysis() {
+            return new Promise((resolve) => {
+                const steps = [
+                    { text: 'Veri analiz ediliyor...', subText: 'Veri ön işleme ve temizleme', progress: 10 },
+                    { text: 'Müşteri özellikleri çıkarılıyor...', subText: 'Önemli özelliklerin belirlenmesi', progress: 30 },
+                    { text: 'Segmentler oluşturuluyor...', subText: 'K-Means algoritması çalıştırılıyor', progress: 50 },
+                    { text: 'Segment profilleri oluşturuluyor...', subText: 'OpenAI API ile analiz yapılıyor', progress: 70 },
+                    { text: 'Pazarlama önerileri hazırlanıyor...', subText: 'Segment bazlı stratejiler oluşturuluyor', progress: 85 },
+                    { text: 'Rapor oluşturuluyor...', subText: 'Sonuçlar derleniyor', progress: 95 }
+                ];
+                
+                let currentStep = 0;
+                
+                function updateProgress() {
+                    if (currentStep < steps.length) {
+                        const step = steps[currentStep];
+                        loadingText.textContent = step.text;
+                        loadingSubText.textContent = step.subText;
+                        progressBar.style.width = `${step.progress}%`;
+                        currentStep++;
+                        setTimeout(updateProgress, 800);
+                    } else {
+                        // Final step
+                        loadingText.textContent = 'Tamamlandı!';
+                        loadingSubText.textContent = 'Sonuçlar hazırlanıyor...';
+                        progressBar.style.width = '100%';
+                        setTimeout(resolve, 500);
+                    }
+                }
+                
+                updateProgress();
+            });
+        }
+        
+        // Reset UI
+        function resetUI() {
+            fileInfo.textContent = '';
+            fileInfo.classList.remove('text-red-500');
+            
+            // Hide all result sections
+            dataPreviewSection.classList.add('hidden');
+            segmentationSection.classList.add('hidden');
+            recommendationsSection.classList.add('hidden');
+            reportSection.classList.add('hidden');
+            
+            // Clear tables and charts
+            tableHeader.innerHTML = '';
+            tableBody.innerHTML = '';
+            segmentProfiles.innerHTML = '';
+            recommendationsTabs.innerHTML = '';
+            recommendationsContent.innerHTML = '';
+            reportContent.innerHTML = '';
+        }
+        
+        // Perform segmentation on the data
+        function performSegmentation() {
+            // In a real application, this would use machine learning algorithms
+            // For this demo, we'll simulate segmentation results
+            
+            const clusterCount = parseInt(document.getElementById('clusterCount').value) || 5;
+            const segmentCount = clusterCount === 'auto' ? 5 : clusterCount;
+            
+            // Simulate clustering by randomly assigning segments
+            segmentResults = {
+                segmentDistribution: {},
+                segmentProfiles: {},
+                featureImportance: {}
+            };
+            
+            // Create segment distribution
+            for (let i = 1; i <= segmentCount; i++) {
+                segmentResults.segmentDistribution[`Segment ${i}`] = 0;
+            }
+            
+            // Assign segments to data
+            currentData.forEach(item => {
+                const randomSegment = Math.floor(Math.random() * segmentCount) + 1;
+                const segmentName = `Segment ${randomSegment}`;
+                item.segment = randomSegment;
+                segmentResults.segmentDistribution[segmentName]++;
+            });
+            
+            // Generate feature importance
+            const features = Object.keys(currentData[0]).filter(key => key !== 'segment');
+            features.forEach(feature => {
+                segmentResults.featureImportance[feature] = Math.random();
+            });
+            
+            // Sort features by importance
+            const sortedFeatures = features.sort((a, b) => 
+                segmentResults.featureImportance[b] - segmentResults.featureImportance[a]
+            ).slice(0, 8); // Take top 8 features
+            
+            // Generate segment profiles based on data
+            for (let i = 1; i <= segmentCount; i++) {
+                const segmentName = `Segment ${i}`;
+                const segmentData = currentData.filter(item => item.segment === i);
+                
+                segmentResults.segmentProfiles[segmentName] = {
+                    size: segmentData.length,
+                    percentage: (segmentData.length / currentData.length * 100).toFixed(1),
+                    name: generateSegmentName(i),
+                    description: generateSegmentDescription(i),
+                    characteristics: {}
+                };
+                
+                // Calculate average/common values for key features
+                sortedFeatures.forEach(feature => {
+                    const values = segmentData.map(item => item[feature]).filter(Boolean);
+                    if (values.length > 0) {
+                        if (typeof values[0] === 'number') {
+                            // Calculate average for numeric values
+                            const avg = values.reduce((sum, val) => sum + val, 0) / values.length;
+                            segmentResults.segmentProfiles[segmentName].characteristics[feature] = parseFloat(avg.toFixed(2));
+                        } else {
+                            // Find most common value for non-numeric
+                            const valueCounts = values.reduce((counts, value) => {
+                                counts[value] = (counts[value] || 0) + 1;
+                                return counts;
+                            }, {});
+                            
+                            const mostCommonValue = Object.keys(valueCounts).reduce((a, b) => 
+                                valueCounts[a] > valueCounts[b] ? a : b
+                            );
+                            
+                            segmentResults.segmentProfiles[segmentName].characteristics[feature] = mostCommonValue;
+                        }
+                    }
+                });
+            }
+            
+            // Create visualization
+            createSegmentDistributionChart();
+            createFeatureImportanceChart();
+            displaySegmentProfiles();
+        }
+        
+        // Generate recommendations based on segments
+        function generateRecommendations() {
+            recommendationResults = {};
+            
+            // For each segment, generate marketing recommendations
+            Object.keys(segmentResults.segmentProfiles).forEach(segmentName => {
+                const segment = segmentResults.segmentProfiles[segmentName];
+                
+                recommendationResults[segmentName] = {
+                    campaigns: generateCampaigns(segment),
+                    channels: generateChannels(segment),
+                    messages: generateMessages(segment),
+                    timing: generateTiming(segment),
+                    products: generateProducts(segment)
+                };
+            });
+            
+            // Create the recommendations UI
+            displayRecommendations();
+        }
+        
+        // Generate final report
+        function generateReport() {
+            const apiKeyProvided = apiKeyInput.value.trim().length > 0;
+            
+            let reportHTML = `
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold mb-3">Genel Analiz Özeti</h3>
+                    <p class="mb-2">Analiz edilen veri seti <strong>${currentData.length}</strong> müşteri kaydı ve <strong>${Object.keys(currentData[0]).length}</strong> özellik içermektedir.</p>
+                    <p class="mb-2">Müşteriler <strong>${Object.keys(segmentResults.segmentProfiles).length}</strong> farklı segmente ayrılmıştır.</p>
+                    ${apiKeyProvided ? 
+                        '<p class="mb-2">Segment analizi ve öneriler OpenAI API kullanılarak gerçekleştirilmiştir.</p>' : 
+                        '<p class="mb-2 text-amber-600">Not: OpenAI API anahtarı sağlanmadığı için segment analizi ve öneriler simülasyon ile oluşturulmuştur.</p>'
+                    }
+                </div>
+                
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold mb-3">Segment Değerlendirmesi</h3>
+                    <div class="space-y-4">
+            `;
+            
+            // Add segment evaluations
+            Object.keys(segmentResults.segmentProfiles).forEach(segmentName => {
+                const segment = segmentResults.segmentProfiles[segmentName];
+                
+                reportHTML += `
+                    <div class="p-4 rounded-md bg-gray-50">
+                        <h4 class="font-medium text-lg mb-2">${segment.name}</h4>
+                        <p class="text-gray-700 mb-3">${segment.description}</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Müşterilerin ${segment.percentage}%'i</span>
+                            <span class="font-medium">${segment.size} müşteri</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            reportHTML += `
+                </div>
+            </div>
+            
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold mb-3">Pazarlama Stratejisi Özeti</h3>
+                <p class="mb-4">Her müşteri segmenti için özelleştirilmiş pazarlama stratejileri aşağıda özetlenmiştir:</p>
+                
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Segment</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Önerilen Kampanyalar</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İdeal İletişim Kanalları</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+            `;
+            
+            // Add marketing recommendations to table
+            Object.keys(recommendationResults).forEach((segmentName, index) => {
+                const recommendations = recommendationResults[segmentName];
+                const segment = segmentResults.segmentProfiles[segmentName];
+                
+                reportHTML += `
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="font-medium text-gray-900">${segment.name}</div>
+                            <div class="text-sm text-gray-500">${segment.percentage}% müşteri</div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <ul class="list-disc list-inside text-sm text-gray-700">
+                                ${recommendations.campaigns.map(campaign => `<li>${campaign}</li>`).join('')}
+                            </ul>
+                        </td>
+                        <td class="px-6 py-4">
+                            <ul class="list-disc list-inside text-sm text-gray-700">
+                                ${recommendations.channels.map(channel => `<li>${channel}</li>`).join('')}
+                            </ul>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            reportHTML += `
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold mb-3">Sonraki Adımlar</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li>Belirlenen segmentlere özel pazarlama kampanyaları hayata geçirilmelidir.</li>
+                    <li>Her segment için önerilen iletişim kanallarının etkinliği düzenli olarak ölçülmelidir.</li>
+                    <li>3 ay sonra müşteri segmentasyonu yeniden analiz edilmelidir.</li>
+                    <li>Satış tahminleri, segment bazlı stratejilerin etkilerini göz önünde bulundurarak güncellenmelidir.</li>
+                </ul>
+            </div>
+            `;
+            
+            // Update the report content
+            reportContent.innerHTML = reportHTML;
+        }
+        
+        // Create segment distribution chart
+        function createSegmentDistributionChart() {
+            const ctx = document.getElementById('segmentDistributionChart').getContext('2d');
+            
+            // Extract segment data
+            const labels = Object.keys(segmentResults.segmentDistribution);
+            const data = Object.values(segmentResults.segmentDistribution);
+            
+            // Create chart
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: segmentColors.slice(0, labels.length),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                font: {
+                                    size: 12
+                                },
+                                boxWidth: 20
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label;
+                                    const value = context.raw;
+                                    const percentage = Math.round(value / data.reduce((a, b) => a + b, 0) * 100);
+                                    return `${label}: ${value} müşteri (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Create feature importance chart
+        function createFeatureImportanceChart() {
+            const ctx = document.getElementById('featureImportanceChart').getContext('2d');
+            
+            // Get top 8 features by importance
+            const features = Object.keys(segmentResults.featureImportance)
+                .sort((a, b) => segmentResults.featureImportance[b] - segmentResults.featureImportance[a])
+                .slice(0, 8);
+            
+            const featureData = features.map(feature => segmentResults.featureImportance[feature]);
+            
+            // Create chart
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: features,
+                    datasets: [{
+                        label: 'Özellik Önemi',
+                        data: featureData,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 1,
+                            title: {
+                                display: true,
+                                text: 'Önem Seviyesi'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Display segment profiles
+        function displaySegmentProfiles() {
+            segmentProfiles.innerHTML = '';
+            
+            Object.keys(segmentResults.segmentProfiles).forEach((segmentName, index) => {
+                const segment = segmentResults.segmentProfiles[segmentName];
+                const color = segmentColors[index % segmentColors.length].replace('0.8', '1');
+                
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-lg shadow-sm border-t-4 p-5';
+                card.style.borderTopColor = color;
+                
+                let characteristicsHTML = '';
+                Object.entries(segment.characteristics).slice(0, 5).forEach(([feature, value]) => {
+                    characteristicsHTML += `
+                        <div class="flex justify-between items-center text-sm mb-1">
+                            <span class="text-gray-600">${feature}:</span>
+                            <span class="font-medium">${value}</span>
+                        </div>
+                    `;
+                });
+                
+                card.innerHTML = `
+                    <div class="flex justify-between items-center mb-3">
+                        <h4 class="text-lg font-semibold">${segment.name}</h4>
+                        <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full font-medium">${segment.percentage}%</span>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-4">${segment.description}</p>
+                    <div class="mb-4">
+                        <h5 class="font-medium text-gray-800 mb-2 text-sm">Öne Çıkan Özellikler</h5>
+                        ${characteristicsHTML}
+                    </div>
+                    <div class="text-right">
+                        <span class="text-sm text-gray-500">${segment.size} müşteri</span>
+                    </div>
+                `;
+                
+                segmentProfiles.appendChild(card);
+            });
+        }
+        
+        // Display recommendations
+        function displayRecommendations() {
+            // Clear previous content
+            recommendationsTabs.innerHTML = '';
+            recommendationsContent.innerHTML = '';
+            
+            // Create tabs for each segment
+            Object.keys(recommendationResults).forEach((segmentName, index) => {
+                const segment = segmentResults.segmentProfiles[segmentName];
+                const tabId = `tab-${segmentName.replace(/\s+/g, '-').toLowerCase()}`;
+                
+                // Create tab button
+                const tabButton = document.createElement('button');
+                tabButton.className = `px-4 py-2 text-sm font-medium ${index === 0 ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`;
+                tabButton.textContent = segment.name;
+                tabButton.onclick = function() {
+                    // Deactivate all tabs
+                    Array.from(recommendationsTabs.children).forEach(tab => {
+                        tab.classList.remove('border-b-2', 'border-blue-500', 'text-blue-600');
+                        tab.classList.add('text-gray-500', 'hover:text-gray-700');
+                    });
+                    
+                    // Hide all content
+                    Array.from(recommendationsContent.children).forEach(content => {
+                        content.classList.add('hidden');
+                    });
+                    
+                    // Activate selected tab
+                    tabButton.classList.remove('text-gray-500', 'hover:text-gray-700');
+                    tabButton.classList.add('border-b-2', 'border-blue-500', 'text-blue-600');
+                    
+                    // Show selected content
+                    document.getElementById(tabId).classList.remove('hidden');
+                };
+                
+                recommendationsTabs.appendChild(tabButton);
+                
+                // Create content for the tab
+                const recommendations = recommendationResults[segmentName];
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.id = tabId;
+                contentDiv.className = index === 0 ? '' : 'hidden';
+                
+                contentDiv.innerHTML = `
+                    <div class="bg-gray-50 rounded-lg p-4 mb-6">
+                        <h3 class="text-xl font-semibold mb-2">${segment.name} için Pazarlama Önerileri</h3>
+                        <p class="text-gray-600">${segment.description}</p>
+                        <div class="flex items-center mt-2">
+                            <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full mr-2">Müşterilerin ${segment.percentage}%'i</span>
+                            <span class="text-sm text-gray-500">${segment.size} müşteri</span>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Campaign Recommendations -->
+                        <div class="bg-white rounded-lg shadow-sm p-5 border-l-4 border-indigo-500">
+                            <div class="flex items-center mb-4">
+                                <i class="fas fa-bullhorn text-indigo-500 mr-3 text-xl"></i>
+                                <h4 class="text-lg font-semibold">Önerilen Kampanyalar</h4>
+                            </div>
+                            <ul class="space-y-2">
+                                ${recommendations.campaigns.map(campaign => 
+                                    `<li class="flex items-start">
+                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                        <span>${campaign}</span>
+                                    </li>`
+                                ).join('')}
+                            </ul>
+                        </div>
+                        
+                        <!-- Channel Recommendations -->
+                        <div class="bg-white rounded-lg shadow-sm p-5 border-l-4 border-teal-500">
+                            <div class="flex items-center mb-4">
+                                <i class="fas fa-comments text-teal-500 mr-3 text-xl"></i>
+                                <h4 class="text-lg font-semibold">İletişim Kanalları</h4>
+                            </div>
+                            <ul class="space-y-2">
+                                ${recommendations.channels.map(channel => 
+                                    `<li class="flex items-start">
+                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                        <span>${channel}</span>
+                                    </li>`
+                                ).join('')}
+                            </ul>
+                        </div>
+                        
+                        <!-- Messaging Recommendations -->
+                        <div class="bg-white rounded-lg shadow-sm p-5 border-l-4 border-purple-500">
+                            <div class="flex items-center mb-4">
+                                <i class="fas fa-comment-dots text-purple-500 mr-3 text-xl"></i>
+                                <h4 class="text-lg font-semibold">Mesaj Stratejisi</h4>
+                            </div>
+                            <ul class="space-y-2">
+                                ${recommendations.messages.map(message => 
+                                    `<li class="flex items-start">
+                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                        <span>${message}</span>
+                                    </li>`
+                                ).join('')}
+                            </ul>
+                        </div>
+                        
+                        <!-- Timing Recommendations -->
+                        <div class="bg-white rounded-lg shadow-sm p-5 border-l-4 border-amber-500">
+                            <div class="flex items-center mb-4">
+                                <i class="fas fa-clock text-amber-500 mr-3 text-xl"></i>
+                                <h4 class="text-lg font-semibold">Zamanlama Önerileri</h4>
+                            </div>
+                            <ul class="space-y-2">
+                                ${recommendations.timing.map(timing => 
+                                    `<li class="flex items-start">
+                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                        <span>${timing}</span>
+                                    </li>`
+                                ).join('')}
+                            </ul>
+                        </div>
+                        
+                        <!-- Product Recommendations -->
+                        <div class="bg-white rounded-lg shadow-sm p-5 border-l-4 border-rose-500">
+                            <div class="flex items-center mb-4">
+                                <i class="fas fa-gift text-rose-500 mr-3 text-xl"></i>
+                                <h4 class="text-lg font-semibold">Ürün Önerileri</h4>
+                            </div>
+                            <ul class="space-y-2">
+                                ${recommendations.products.map(product => 
+                                    `<li class="flex items-start">
+                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                        <span>${product}</span>
+                                    </li>`
+                                ).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+                
+                recommendationsContent.appendChild(contentDiv);
+            });
+        }
+        
+        // Helper function to generate segment names
+        function generateSegmentName(segmentId) {
+            const segmentNames = [
+                'Yüksek Değerli Sadık Müşteriler',
+                'Orta Değerli Düzenli Müşteriler',
+                'Yeni Potansiyel Yüksek Değerli Müşteriler',
+                'Fiyat Duyarlı Müşteriler',
+                'Yeni ve Dönemsel Müşteriler',
+                'Kaybolmaya Yüz Tutmuş Müşteriler',
+                'VIP Prestij Müşterileri'
+            ];
+            
+            return segmentId <= segmentNames.length ? 
+                segmentNames[segmentId - 1] : 
+                `Segment ${segmentId}`;
+        }
+        
+        // Helper function to generate segment descriptions
+        function generateSegmentDescription(segmentId) {
+            const descriptions = [
+                'Sık alışveriş yapan, yüksek sepet ortalamasına sahip, markanıza sadık müşteriler.',
+                'Düzenli olarak alışveriş yapan, orta seviye harcama yapan güvenilir müşteriler.',
+                'Henüz yeni müşteriler olmalarına rağmen yüksek değer potansiyeli taşıyan kişiler.',
+                'İndirim ve promosyonlara duyarlı, fiyat odaklı alışveriş yapan müşteriler.',
+                'Henüz sadakat geliştirmemiş, dönemsel alışveriş yapan müşteriler.',
+                'Eskiden aktif olan ancak alışveriş sıklığı azalan müşteriler.',
+                'En yüksek harcama yapan, özel ilgi gösterilmesi gereken prestijli müşteriler.'
+            ];
+            
+            return segmentId <= descriptions.length ? 
+                descriptions[segmentId - 1] : 
+                `Bu segment için açıklama henüz oluşturulmamıştır.`;
+        }
+        
+        // Helper function to generate campaign recommendations
+        function generateCampaigns(segment) {
+            const campaignSets = {
+                'Yüksek Değerli Sadık Müşteriler': [
+                    'VIP erken erişim programı',
+                    'Sadakat ödülleri ve özel indirimler',
+                    'Referans programı ile arkadaş davet kampanyası'
+                ],
+                'Orta Değerli Düzenli Müşteriler': [
+                    'Satın alma sıklığını artıracak indirim kuponları',
+                    'Sepet değerini artırmaya yönelik kombinasyon teklifleri',
+                    'Uzun vadeli sadakat programı üyeliği'
+                ],
+                'Yeni Potansiyel Yüksek Değerli Müşteriler': [
+                    'Hoş geldin paketi ve ilk alışveriş indirimi',
+                    'Ürün keşif programı ve kişiselleştirilmiş öneriler',
+                    'Erken sadakat programı katılımı'
+                ],
+                'Fiyat Duyarlı Müşteriler': [
+                    'Sınırlı süreli indirim fırsatları',
+                    'Miktar bazlı indirim kampanyaları',
+                    'Fiyat eşleştirme garantisi'
+                ],
+                'Yeni ve Dönemsel Müşteriler': [
+                    'Mevsimsel özel fırsatlar',
+                    'Marka tanıtım kampanyaları',
+                    'İkinci alışverişe özel indirim'
+                ],
+                'Kaybolmaya Yüz Tutmuş Müşteriler': [
+                    'Geri dönüş indirimi kampanyası',
+                    'Yeniden aktivasyon özel teklifleri',
+                    'Sizi özledik kampanyası ve anket'
+                ],
+                'VIP Prestij Müşterileri': [
+                    'Özel davetiye ile VIP etkinlikler',
+                    'Kişiselleştirilmiş ürün ve hizmetler',
+                    'Öncelikli müşteri hizmetleri ve konsiyerj'
+                ]
+            };
+            
+            return campaignSets[segment.name] || [
+                'Kişiselleştirilmiş kampanya önerileri',
+                'Segment bazlı özel teklifler',
+                'Müşteri değerine yönelik fırsatlar'
+            ];
+        }
+        
+        // Helper function to generate channel recommendations
+        function generateChannels(segment) {
+            const channelSets = {
+                'Yüksek Değerli Sadık Müşteriler': [
+                    'Kişiselleştirilmiş e-posta iletişimi',
+                    'Özel müşteri temsilcisi desteği',
+                    'SMS ve mobil uygulama bildirimleri'
+                ],
+                'Orta Değerli Düzenli Müşteriler': [
+                    'Düzenli e-posta bültenleri',
+                    'SMS kampanya bildirimleri',
+                    'Sosyal medya reklamları'
+                ],
+                'Yeni Potansiyel Yüksek Değerli Müşteriler': [
+                    'Kişiselleştirilmiş karşılama e-postaları',
+                    'Mobil uygulama bildirimleri',
+                    'Hedefli sosyal medya kampanyaları'
+                ],
+                'Fiyat Duyarlı Müşteriler': [
+                    'İndirim odaklı e-posta kampanyaları',
+                    'SMS fırsat bildirimleri',
+                    'Fiyat karşılaştırma platformlarında reklamlar'
+                ],
+                'Yeni ve Dönemsel Müşteriler': [
+                    'Sosyal medya reklamları',
+                    'Genel e-posta pazarlama',
+                    'Retargeting kampanyaları'
+                ],
+                'Kaybolmaya Yüz Tutmuş Müşteriler': [
+                    'Kişiselleştirilmiş geri dönüş e-postaları',
+                    'SMS ile özel teklifler',
+                    'Direkt posta kampanyaları'
+                ],
+                'VIP Prestij Müşterileri': [
+                    'Telefon ile birebir iletişim',
+                    'Özelleştirilmiş e-posta iletişimi',
+                    'Özel davetiye ve etkinlikler'
+                ]
+            };
+            
+            return channelSets[segment.name] || [
+                'E-posta pazarlama',
+                'Sosyal medya kampanyaları',
+                'SMS bildirimleri'
+            ];
+        }
+        
+        // Helper function to generate messaging recommendations
+        function generateMessages(segment) {
+            const messageSets = {
+                'Yüksek Değerli Sadık Müşteriler': [
+                    'Ayrıcalıklı ve özel hissettiren içerik',
+                    'Yeni ürünlere erken erişim mesajları',
+                    'Sadakat ve teşekkür odaklı iletişim'
+                ],
+                'Orta Değerli Düzenli Müşteriler': [
+                    'Değer odaklı mesajlar',
+                    'Düzenli alışverişlerin ödüllendirilmesi',
+                    'Ürün önerileri ve koleksiyon güncellemeleri'
+                ],
+                'Yeni Potansiyel Yüksek Değerli Müşteriler': [
+                    'Karşılama ve marka hikayesi',
+                    'Ürün kalitesi ve değer vurgusu',
+                    'Kişiselleştirilmiş deneyim mesajları'
+                ],
+                'Fiyat Duyarlı Müşteriler': [
+                    'Fiyat ve değer vurgusu',
+                    'Sınırlı süreli fırsat mesajları',
+                    'Tasarruf odaklı içerik'
+                ],
+                'Yeni ve Dönemsel Müşteriler': [
+                    'Marka değerleri ve tanıtım içeriği',
+                    'Mevsimsel ürün önerileri',
+                    'İlgi çekici içerik ve kampanyalar'
+                ],
+                'Kaybolmaya Yüz Tutmuş Müşteriler': [
+                    'Özlem ve geri dönüş mesajları',
+                    'Kaçırılan fırsatlar ve yenilikler',
+                    'Geri bildirim talep eden içerik'
+                ],
+                'VIP Prestij Müşterileri': [
+                    'Premium ve lüks odaklı içerik',
+                    'Kişiselleştirilmiş özel teklif mesajları',
+                    'Ayrıcalıklı etkinlik davetiyeleri'
+                ]
+            };
+            
+            return messageSets[segment.name] || [
+                'Segment ihtiyaçlarına uygun içerik',
+                'Kişiselleştirilmiş mesajlaşma',
+                'Marka değerlerine uygun iletişim'
+            ];
+        }
+        
+        // Helper function to generate timing recommendations
+        function generateTiming(segment) {
+            const timingSets = {
+                'Yüksek Değerli Sadık Müşteriler': [
+                    'Önceki alışveriş verilerine göre kişiselleştirilmiş zamanlama',
+                    'Haftalık VIP fırsatlar ve güncellemeler',
+                    'Yeni koleksiyon lansmanından 48 saat önce bilgilendirme'
+                ],
+                'Orta Değerli Düzenli Müşteriler': [
+                    'Son alışverişten 15-20 gün sonra takip iletişimi',
+                    'İki haftada bir düzenli içerik ve fırsatlar',
+                    'Alışveriş sıklığına göre hatırlatmalar'
+                ],
+                'Yeni Potansiyel Yüksek Değerli Müşteriler': [
+                    'İlk alışveriş sonrası 3-5 gün içinde takip',
+                    'İlk ay haftalık bilgilendirme ve ürün önerileri',
+                    'İkinci alışveriş sonrası sadakat programı daveti'
+                ],
+                'Fiyat Duyarlı Müşteriler': [
+                    'Büyük indirim dönemleri öncesi bilgilendirme',
+                    'Hafta sonu özel fırsatları',
+                    'Sezon sonu indirimler için erken erişim bildirimleri'
+                ],
+                'Yeni ve Dönemsel Müşteriler': [
+                    'Mevsim değişimlerinde özel kampanyalar',
+                    'Bayram ve özel günler öncesi hatırlatmalar',
+                    'Son alışverişten 30 gün sonra hatırlatma kampanyaları'
+                ],
+                'Kaybolmaya Yüz Tutmuş Müşteriler': [
+                    'Son alışverişten 60-90 gün sonra geri dönüş kampanyası',
+                    'Özel gün ve bayramlarda hatırlatma iletişimi',
+                    'Büyük sezonluk indirim başlangıcından 24 saat önce bilgilendirme'
+                ],
+                'VIP Prestij Müşterileri': [
+                    'Kişiselleştirilmiş özel günlerde iletişim (doğum günü, yıldönümü)',
+                    'Özel etkinliklerden 1-2 hafta önce davetiye',
+                    'Aylık VIP koleksiyon ve fırsatlar'
+                ]
+            };
+            
+            return timingSets[segment.name] || [
+                'Haftalık düzenli içerik paylaşımı',
+                'Son alışverişi takip eden iletişim',
+                'Özel gün ve fırsat bildirimleri'
+            ];
+        }
+        
+        // Helper function to generate product recommendations
+        function generateProducts(segment) {
+            const productSets = {
+                'Yüksek Değerli Sadık Müşteriler': [
+                    'Premium ürün koleksiyonu',
+                    'Sınırlı üretim özel ürünler',
+                    'Tamamlayıcı ürün setleri ve aksesuar önerileri'
+                ],
+                'Orta Değerli Düzenli Müşteriler': [
+                    'En çok tercih edilen ürünler',
+                    'Fiyat-performans odaklı ürünler',
+                    'Önceki alışverişlere göre tamamlayıcı ürünler'
+                ],
+                'Yeni Potansiyel Yüksek Değerli Müşteriler': [
+                    'Tanıtıcı ürün setleri',
+                    'Giriş seviyesi premium ürünler',
+                    'En popüler ve beğenilen ürünler'
+                ],
+                'Fiyat Duyarlı Müşteriler': [
+                    'İndirimli ürünler ve fırsatlar',
+                    'Uygun fiyatlı alternatifler',
+                    'Çoklu alım indirimleri ve ürün paketleri'
+                ],
+                'Yeni ve Dönemsel Müşteriler': [
+                    'Sezona özel ürünler',
+                    'Trend ve yeni koleksiyon ürünleri',
+                    'Giriş seviyesi ürünler'
+                ],
+                'Kaybolmaya Yüz Tutmuş Müşteriler': [
+                    'Önceki satın alımlarla ilgili yeni versiyonlar',
+                    'Özel indirimli ürünler',
+                    'Yeniden giriş fırsatları ve paketleri'
+                ],
+                'VIP Prestij Müşterileri': [
+                    'Özel tasarım ve kişiselleştirilmiş ürünler',
+                    'Koleksiyon parçaları ve lüks ürünler',
+                    'Ön sipariş ve özel üretim fırsatları'
+                ]
+            };
+            
+            return productSets[segment.name] || [
+                'Müşteri profiline uygun ürünler',
+                'Tamamlayıcı ürün önerileri',
+                'En popüler ürünler'
+            ];
+        }
+        
+        // Initialize any automatic process
+        document.addEventListener('DOMContentLoaded', function() {
+            // If you want any automatic initialization, add it here
+            
+            // Simulate having API key - production would use real key
+            apiKeyInput.value = "sk_test_********************";
+        });
+    </script>
+</body>
+</html>
