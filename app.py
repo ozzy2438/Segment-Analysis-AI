@@ -118,4 +118,6 @@ def upload_file():
 @app.route('/api/data/preview', methods=['GET'])
 def get_data_preview():
     if current_data is None:
-        return jsonify({'error': 'No data loaded yet
+        return jsonify({'error': 'No data loaded yet'}), 400
+    
+    return jsonify(current_data.head(10).to_dict(orient='records'))

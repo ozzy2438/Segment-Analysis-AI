@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Akıllı Müşteri Segmentasyonu ve Veri Analizi Platformu</title>
+    <title>Smart Customer Segmentation and Data Analysis Platform</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -13,30 +13,30 @@
 <body class="bg-gray-50 min-h-screen">
     <header class="bg-gradient-to-r from-blue-600 to-indigo-800 text-white shadow-lg">
         <div class="container mx-auto py-6 px-4">
-            <h1 class="text-3xl font-bold mb-2">Akıllı Müşteri Segmentasyonu ve Veri Analizi Platformu</h1>
-            <p class="text-blue-100">OpenAI API destekli dinamik müşteri analizi ve pazarlama önerileri</p>
+            <h1 class="text-3xl font-bold mb-2">Smart Customer Segmentation and Data Analysis Platform</h1>
+            <p class="text-blue-100">OpenAI API powered dynamic customer analysis and marketing recommendations</p>
         </div>
     </header>
 
     <main class="container mx-auto py-8 px-4">
         <!-- File Upload Section -->
         <section class="mb-12 bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-2xl font-bold mb-4 text-gray-800">Veri Yükleme</h2>
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Data Upload</h2>
             <div class="flex flex-col md:flex-row items-start gap-8">
                 <div class="w-full md:w-1/2">
                     <div class="border-2 border-dashed border-blue-300 rounded-lg p-8 text-center bg-blue-50 hover:bg-blue-100 transition-colors cursor-pointer" id="dropZone">
                         <i class="fas fa-cloud-upload-alt text-5xl text-blue-500 mb-4"></i>
-                        <p class="text-gray-700 mb-2">Dosyanızı sürükleyip bırakın veya seçin</p>
-                        <p class="text-sm text-gray-500 mb-4">CSV, Excel, JSON formatları desteklenir</p>
+                        <p class="text-gray-700 mb-2">Drag and drop your file or select</p>
+                        <p class="text-sm text-gray-500 mb-4">CSV, Excel, JSON formats are supported</p>
                         <input type="file" id="fileInput" class="hidden" accept=".csv,.xlsx,.xls,.json">
                         <button class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-md transition-colors" id="browseButton">
-                            Dosya Seç
+                            Select File
                         </button>
                     </div>
                     <div class="mt-4 flex justify-between items-center">
-                        <p class="text-sm text-gray-600" id="fileInfo">Henüz dosya seçilmedi</p>
+                        <p class="text-sm text-gray-600" id="fileInfo">No file selected yet</p>
                         <button class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded-md transition-colors hidden" id="analyzeButton">
-                            Analiz Et
+                            Analyze
                         </button>
                     </div>
                 </div>
@@ -45,39 +45,39 @@
                     <div class="bg-gray-100 rounded-lg p-4">
                         <h3 class="text-lg font-semibold mb-3 flex items-center">
                             <i class="fas fa-cog text-gray-600 mr-2"></i> 
-                            Analiz Ayarları
+                            Analysis Settings
                         </h3>
                         <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Segment Sayısı</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Number of Segments</label>
                             <select id="clusterCount" class="w-full rounded-md border-gray-300 shadow-sm py-2 px-3 bg-white border">
-                                <option value="3">3 Segment</option>
-                                <option value="4">4 Segment</option>
-                                <option value="5" selected>5 Segment</option>
-                                <option value="6">6 Segment</option>
-                                <option value="7">7 Segment</option>
-                                <option value="auto">Otomatik Belirle</option>
+                                <option value="3">3 Segments</option>
+                                <option value="4">4 Segments</option>
+                                <option value="5" selected>5 Segments</option>
+                                <option value="6">6 Segments</option>
+                                <option value="7">7 Segments</option>
+                                <option value="auto">Determine Automatically</option>
                             </select>
                         </div>
 
                         <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">API Entegrasyonu</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">API Integration</label>
                             <div class="relative">
                                 <input type="text" id="apiKey" placeholder="OpenAI API Key" class="w-full rounded-md border-gray-300 shadow-sm py-2 px-3 bg-white border">
                                 <div class="absolute inset-y-0 right-0 flex items-center pr-3">
                                     <i class="fas fa-key text-gray-400"></i>
                                 </div>
                             </div>
-                            <p class="mt-1 text-xs text-gray-500">Akıllı analiz için OpenAI API anahtarı gereklidir</p>
+                            <p class="mt-1 text-xs text-gray-500">OpenAI API key is required for smart analysis</p>
                         </div>
 
                         <div class="flex items-center mb-2">
                             <input type="checkbox" id="advancedAnalysis" class="rounded text-blue-600 mr-2" checked>
-                            <label for="advancedAnalysis" class="text-sm text-gray-700">Gelişmiş Segment Analizi</label>
+                            <label for="advancedAnalysis" class="text-sm text-gray-700">Advanced Segment Analysis</label>
                         </div>
 
                         <div class="flex items-center">
                             <input type="checkbox" id="marketingRecommendations" class="rounded text-blue-600 mr-2" checked>
-                            <label for="marketingRecommendations" class="text-sm text-gray-700">Pazarlama Önerileri Oluştur</label>
+                            <label for="marketingRecommendations" class="text-sm text-gray-700">Generate Marketing Recommendations</label>
                         </div>
                     </div>
                 </div>
@@ -88,8 +88,8 @@
         <div id="loadingSection" class="hidden">
             <div class="flex flex-col items-center justify-center p-10 mb-12 bg-white rounded-lg shadow-md">
                 <div class="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-                <p class="text-lg text-gray-700 font-medium" id="loadingText">Veri analiz ediliyor...</p>
-                <p class="text-sm text-gray-500 mt-2" id="loadingSubText">Bu işlem birkaç dakika sürebilir</p>
+                <p class="text-lg text-gray-700 font-medium" id="loadingText">Analyzing data...</p>
+                <p class="text-sm text-gray-500 mt-2" id="loadingSubText">This process may take a few minutes</p>
                 <div class="w-full max-w-md bg-gray-200 rounded-full h-2.5 mt-4">
                     <div class="bg-blue-600 h-2.5 rounded-full" id="progressBar" style="width: 10%"></div>
                 </div>
@@ -99,10 +99,10 @@
         <!-- Data Preview Section -->
         <section id="dataPreviewSection" class="mb-12 bg-white rounded-lg shadow-md p-6 hidden">
             <div class="flex justify-between items-center mb-4">
-                <h2 class="text-2xl font-bold text-gray-800">Veri Önizleme</h2>
+                <h2 class="text-2xl font-bold text-gray-800">Data Preview</h2>
                 <div class="flex items-center">
-                    <span class="text-sm text-gray-500 mr-2">Satır sayısı: <span id="rowCount" class="font-medium">0</span></span>
-                    <span class="text-sm text-gray-500 ml-2">Sütun sayısı: <span id="columnCount" class="font-medium">0</span></span>
+                    <span class="text-sm text-gray-500 mr-2">Row count: <span id="rowCount" class="font-medium">0</span></span>
+                    <span class="text-sm text-gray-500 ml-2">Column count: <span id="columnCount" class="font-medium">0</span></span>
                 </div>
             </div>
             
@@ -116,17 +116,17 @@
                 </table>
             </div>
             
-            <p class="mt-4 text-sm text-gray-500">İlk 10 satır gösteriliyor. Tüm veri seti üzerinde analiz yapılacaktır.</p>
+            <p class="mt-4 text-sm text-gray-500">First 10 rows are displayed. Analysis will be performed on the entire dataset.</p>
         </section>
 
         <!-- Segmentation Results -->
         <section id="segmentationSection" class="mb-12 bg-white rounded-lg shadow-md p-6 hidden">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800">Segmentasyon Sonuçları</h2>
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Segmentation Results</h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <!-- Segment Distribution Chart -->
                 <div class="bg-gray-50 rounded-lg p-4 shadow-sm">
-                    <h3 class="text-lg font-semibold mb-3">Segment Dağılımı</h3>
+                    <h3 class="text-lg font-semibold mb-3">Segment Distribution</h3>
                     <div class="aspect-w-4 aspect-h-3">
                         <canvas id="segmentDistributionChart" class="w-full h-full"></canvas>
                     </div>
@@ -134,7 +134,7 @@
                 
                 <!-- Segment Feature Importance -->
                 <div class="bg-gray-50 rounded-lg p-4 shadow-sm">
-                    <h3 class="text-lg font-semibold mb-3">Önemli Özellikler</h3>
+                    <h3 class="text-lg font-semibold mb-3">Important Features</h3>
                     <div class="aspect-w-4 aspect-h-3">
                         <canvas id="featureImportanceChart" class="w-full h-full"></canvas>
                     </div>
@@ -142,7 +142,7 @@
             </div>
             
             <div class="mt-8">
-                <h3 class="text-lg font-semibold mb-4">Segment Profilleri</h3>
+                <h3 class="text-lg font-semibold mb-4">Segment Profiles</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="segmentProfiles">
                     <!-- Segment cards will be generated here dynamically -->
                 </div>
@@ -151,7 +151,7 @@
 
         <!-- Marketing Recommendations Section -->
         <section id="recommendationsSection" class="mb-12 bg-white rounded-lg shadow-md p-6 hidden">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800">Pazarlama Stratejisi Önerileri</h2>
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Marketing Strategy Recommendations</h2>
             
             <div id="recommendationsTabs" class="border-b border-gray-200 mb-6">
                 <!-- Tabs will be generated here dynamically -->
@@ -164,7 +164,7 @@
 
         <!-- Final Report -->
         <section id="reportSection" class="mb-12 bg-white rounded-lg shadow-md p-6 hidden">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800">Analiz Özeti ve Rapor</h2>
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Analysis Summary and Report</h2>
             
             <div class="prose max-w-none">
                 <div id="reportContent">
@@ -178,20 +178,20 @@
         <div class="container mx-auto py-8 px-4">
             <div class="flex flex-col md:flex-row justify-between">
                 <div class="mb-6 md:mb-0">
-                    <h3 class="text-xl font-semibold text-white mb-3">Akıllı Müşteri Segmentasyonu</h3>
-                    <p class="text-gray-400 max-w-md">OpenAI API destekli dinamik müşteri segmentasyonu ve pazarlama stratejisi önerileri platformu.</p>
+                    <h3 class="text-xl font-semibold text-white mb-3">Smart Customer Segmentation</h3>
+                    <p class="text-gray-400 max-w-md">OpenAI API powered dynamic customer segmentation and marketing strategy recommendations platform.</p>
                 </div>
                 <div>
-                    <h4 class="text-lg font-semibold text-white mb-3">Desteklenen Formatlar</h4>
+                    <h4 class="text-lg font-semibold text-white mb-3">Supported Formats</h4>
                     <ul class="text-gray-400">
-                        <li class="mb-1"><i class="far fa-file-alt mr-2"></i> CSV dosyaları</li>
-                        <li class="mb-1"><i class="far fa-file-excel mr-2"></i> Excel dosyaları (.xlsx, .xls)</li>
-                        <li><i class="far fa-file-code mr-2"></i> JSON dosyaları</li>
+                        <li class="mb-1"><i class="far fa-file-alt mr-2"></i> CSV files</li>
+                        <li class="mb-1"><i class="far fa-file-excel mr-2"></i> Excel files (.xlsx, .xls)</li>
+                        <li><i class="far fa-file-code mr-2"></i> JSON files</li>
                     </ul>
                 </div>
             </div>
             <div class="mt-8 border-t border-gray-700 pt-6 text-center text-sm text-gray-500">
-                <p>© 2023 Akıllı Müşteri Segmentasyonu ve Veri Analizi Platformu. Tüm hakları saklıdır.</p>
+                <p>© 2023 Smart Customer Segmentation and Data Analysis Platform. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -284,7 +284,7 @@
             
             // Reset UI
             resetUI();
-            fileInfo.textContent = `Seçilen dosya: ${fileName}`;
+            fileInfo.textContent = `Selected file: ${fileName}`;
             analyzeButton.classList.remove('hidden');
             
             // Parse file based on its type
@@ -295,7 +295,7 @@
             } else if (fileType === 'json') {
                 parseJSON(file);
             } else {
-                fileInfo.textContent = 'Desteklenmeyen dosya formatı. Lütfen CSV, Excel veya JSON dosyası yükleyin.';
+                fileInfo.textContent = 'Unsupported file format. Please upload a CSV, Excel, or JSON file.';
                 fileInfo.classList.add('text-red-500');
                 analyzeButton.classList.add('hidden');
             }
@@ -312,7 +312,7 @@
                 },
                 error: function(error) {
                     console.error('CSV parsing error:', error);
-                    fileInfo.textContent = 'CSV dosyası ayrıştırılırken hata oluştu.';
+                    fileInfo.textContent = 'Error occurred while parsing the CSV file.';
                     fileInfo.classList.add('text-red-500');
                 }
             });
@@ -347,7 +347,7 @@
             };
             
             reader.onerror = function() {
-                fileInfo.textContent = 'Excel dosyası okunurken hata oluştu.';
+                fileInfo.textContent = 'Error occurred while reading the Excel file.';
                 fileInfo.classList.add('text-red-500');
             };
             
@@ -389,13 +389,13 @@
                     displayPreview();
                 } catch (error) {
                     console.error('JSON parsing error:', error);
-                    fileInfo.textContent = 'JSON dosyası ayrıştırılırken hata oluştu.';
+                    fileInfo.textContent = 'Error occurred while parsing the JSON file.';
                     fileInfo.classList.add('text-red-500');
                 }
             };
             
             reader.onerror = function() {
-                fileInfo.textContent = 'JSON dosyası okunurken hata oluştu.';
+                fileInfo.textContent = 'Error occurred while reading the JSON file.';
                 fileInfo.classList.add('text-red-500');
             };
             
@@ -486,7 +486,7 @@
                     console.error('Analysis error:', error);
                     loadingSection.classList.add('hidden');
                     analyzeButton.disabled = false;
-                    alert('Veri analizi sırasında bir hata oluştu. Lütfen tekrar deneyin.');
+                    alert('An error occurred during data analysis. Please try again.');
                 });
         }
         
@@ -494,12 +494,12 @@
         function simulateAnalysis() {
             return new Promise((resolve) => {
                 const steps = [
-                    { text: 'Veri analiz ediliyor...', subText: 'Veri ön işleme ve temizleme', progress: 10 },
-                    { text: 'Müşteri özellikleri çıkarılıyor...', subText: 'Önemli özelliklerin belirlenmesi', progress: 30 },
-                    { text: 'Segmentler oluşturuluyor...', subText: 'K-Means algoritması çalıştırılıyor', progress: 50 },
-                    { text: 'Segment profilleri oluşturuluyor...', subText: 'OpenAI API ile analiz yapılıyor', progress: 70 },
-                    { text: 'Pazarlama önerileri hazırlanıyor...', subText: 'Segment bazlı stratejiler oluşturuluyor', progress: 85 },
-                    { text: 'Rapor oluşturuluyor...', subText: 'Sonuçlar derleniyor', progress: 95 }
+                    { text: 'Analyzing data...', subText: 'Data preprocessing and cleaning', progress: 10 },
+                    { text: 'Extracting customer features...', subText: 'Identifying important features', progress: 30 },
+                    { text: 'Creating segments...', subText: 'Running K-Means algorithm', progress: 50 },
+                    { text: 'Generating segment profiles...', subText: 'Analyzing with OpenAI API', progress: 70 },
+                    { text: 'Preparing marketing recommendations...', subText: 'Creating segment-based strategies', progress: 85 },
+                    { text: 'Generating report...', subText: 'Compiling results', progress: 95 }
                 ];
                 
                 let currentStep = 0;
@@ -514,8 +514,8 @@
                         setTimeout(updateProgress, 800);
                     } else {
                         // Final step
-                        loadingText.textContent = 'Tamamlandı!';
-                        loadingSubText.textContent = 'Sonuçlar hazırlanıyor...';
+                        loadingText.textContent = 'Completed!';
+                        loadingSubText.textContent = 'Preparing results...';
                         progressBar.style.width = '100%';
                         setTimeout(resolve, 500);
                     }
@@ -655,17 +655,17 @@
             
             let reportHTML = `
                 <div class="mb-6">
-                    <h3 class="text-xl font-semibold mb-3">Genel Analiz Özeti</h3>
-                    <p class="mb-2">Analiz edilen veri seti <strong>${currentData.length}</strong> müşteri kaydı ve <strong>${Object.keys(currentData[0]).length}</strong> özellik içermektedir.</p>
-                    <p class="mb-2">Müşteriler <strong>${Object.keys(segmentResults.segmentProfiles).length}</strong> farklı segmente ayrılmıştır.</p>
+                    <h3 class="text-xl font-semibold mb-3">General Analysis Summary</h3>
+                    <p class="mb-2">The analyzed dataset contains <strong>${currentData.length}</strong> customer records and <strong>${Object.keys(currentData[0]).length}</strong> features.</p>
+                    <p class="mb-2">Customers are divided into <strong>${Object.keys(segmentResults.segmentProfiles).length}</strong> different segments.</p>
                     ${apiKeyProvided ? 
-                        '<p class="mb-2">Segment analizi ve öneriler OpenAI API kullanılarak gerçekleştirilmiştir.</p>' : 
-                        '<p class="mb-2 text-amber-600">Not: OpenAI API anahtarı sağlanmadığı için segment analizi ve öneriler simülasyon ile oluşturulmuştur.</p>'
+                        '<p class="mb-2">Segment analysis and recommendations were performed using OpenAI API.</p>' : 
+                        '<p class="mb-2 text-amber-600">Note: Since the OpenAI API key was not provided, segment analysis and recommendations were generated through simulation.</p>'
                     }
                 </div>
                 
                 <div class="mb-6">
-                    <h3 class="text-xl font-semibold mb-3">Segment Değerlendirmesi</h3>
+                    <h3 class="text-xl font-semibold mb-3">Segment Evaluation</h3>
                     <div class="space-y-4">
             `;
             
@@ -678,8 +678,8 @@
                         <h4 class="font-medium text-lg mb-2">${segment.name}</h4>
                         <p class="text-gray-700 mb-3">${segment.description}</p>
                         <div class="flex items-center justify-between">
-                            <span class="text-sm text-gray-600">Müşterilerin ${segment.percentage}%'i</span>
-                            <span class="font-medium">${segment.size} müşteri</span>
+                            <span class="text-sm text-gray-600">${segment.percentage}% of customers</span>
+                            <span class="font-medium">${segment.size} customers</span>
                         </div>
                     </div>
                 `;
@@ -690,16 +690,16 @@
             </div>
             
             <div class="mb-6">
-                <h3 class="text-xl font-semibold mb-3">Pazarlama Stratejisi Özeti</h3>
-                <p class="mb-4">Her müşteri segmenti için özelleştirilmiş pazarlama stratejileri aşağıda özetlenmiştir:</p>
+                <h3 class="text-xl font-semibold mb-3">Marketing Strategy Summary</h3>
+                <p class="mb-4">Customized marketing strategies for each customer segment are summarized below:</p>
                 
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Segment</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Önerilen Kampanyalar</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İdeal İletişim Kanalları</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Recommended Campaigns</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ideal Communication Channels</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -714,7 +714,7 @@
                     <tr>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="font-medium text-gray-900">${segment.name}</div>
-                            <div class="text-sm text-gray-500">${segment.percentage}% müşteri</div>
+                            <div class="text-sm text-gray-500">${segment.percentage}% of customers</div>
                         </td>
                         <td class="px-6 py-4">
                             <ul class="list-disc list-inside text-sm text-gray-700">
@@ -737,12 +737,12 @@
             </div>
             
             <div class="mb-6">
-                <h3 class="text-xl font-semibold mb-3">Sonraki Adımlar</h3>
+                <h3 class="text-xl font-semibold mb-3">Next Steps</h3>
                 <ul class="list-disc list-inside space-y-2 text-gray-700">
-                    <li>Belirlenen segmentlere özel pazarlama kampanyaları hayata geçirilmelidir.</li>
-                    <li>Her segment için önerilen iletişim kanallarının etkinliği düzenli olarak ölçülmelidir.</li>
-                    <li>3 ay sonra müşteri segmentasyonu yeniden analiz edilmelidir.</li>
-                    <li>Satış tahminleri, segment bazlı stratejilerin etkilerini göz önünde bulundurarak güncellenmelidir.</li>
+                    <li>Customized marketing campaigns for identified segments should be implemented.</li>
+                    <li>The effectiveness of recommended communication channels for each segment should be regularly measured.</li>
+                    <li>Customer segmentation should be re-analyzed after 3 months.</li>
+                    <li>Sales forecasts should be updated considering the impacts of segment-based strategies.</li>
                 </ul>
             </div>
             `;
@@ -789,7 +789,7 @@
                                     const label = context.label;
                                     const value = context.raw;
                                     const percentage = Math.round(value / data.reduce((a, b) => a + b, 0) * 100);
-                                    return `${label}: ${value} müşteri (${percentage}%)`;
+                                    return `${label}: ${value} customers (${percentage}%)`;
                                 }
                             }
                         }
@@ -815,7 +815,7 @@
                 data: {
                     labels: features,
                     datasets: [{
-                        label: 'Özellik Önemi',
+                        label: 'Feature Importance',
                         data: featureData,
                         backgroundColor: 'rgba(54, 162, 235, 0.6)',
                         borderColor: 'rgba(54, 162, 235, 1)',
@@ -837,7 +837,7 @@
                             max: 1,
                             title: {
                                 display: true,
-                                text: 'Önem Seviyesi'
+                                text: 'Importance Level'
                             }
                         }
                     }
@@ -874,11 +874,11 @@
                     </div>
                     <p class="text-gray-600 text-sm mb-4">${segment.description}</p>
                     <div class="mb-4">
-                        <h5 class="font-medium text-gray-800 mb-2 text-sm">Öne Çıkan Özellikler</h5>
+                        <h5 class="font-medium text-gray-800 mb-2 text-sm">Key Features</h5>
                         ${characteristicsHTML}
                     </div>
                     <div class="text-right">
-                        <span class="text-sm text-gray-500">${segment.size} müşteri</span>
+                        <span class="text-sm text-gray-500">${segment.size} customers</span>
                     </div>
                 `;
                 
@@ -932,11 +932,11 @@
                 
                 contentDiv.innerHTML = `
                     <div class="bg-gray-50 rounded-lg p-4 mb-6">
-                        <h3 class="text-xl font-semibold mb-2">${segment.name} için Pazarlama Önerileri</h3>
+                        <h3 class="text-xl font-semibold mb-2">${segment.name} Marketing Recommendations</h3>
                         <p class="text-gray-600">${segment.description}</p>
                         <div class="flex items-center mt-2">
-                            <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full mr-2">Müşterilerin ${segment.percentage}%'i</span>
-                            <span class="text-sm text-gray-500">${segment.size} müşteri</span>
+                            <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full mr-2">${segment.percentage}% of customers</span>
+                            <span class="text-sm text-gray-500">${segment.size} customers</span>
                         </div>
                     </div>
                     
@@ -945,7 +945,7 @@
                         <div class="bg-white rounded-lg shadow-sm p-5 border-l-4 border-indigo-500">
                             <div class="flex items-center mb-4">
                                 <i class="fas fa-bullhorn text-indigo-500 mr-3 text-xl"></i>
-                                <h4 class="text-lg font-semibold">Önerilen Kampanyalar</h4>
+                                <h4 class="text-lg font-semibold">Recommended Campaigns</h4>
                             </div>
                             <ul class="space-y-2">
                                 ${recommendations.campaigns.map(campaign => 
@@ -961,7 +961,7 @@
                         <div class="bg-white rounded-lg shadow-sm p-5 border-l-4 border-teal-500">
                             <div class="flex items-center mb-4">
                                 <i class="fas fa-comments text-teal-500 mr-3 text-xl"></i>
-                                <h4 class="text-lg font-semibold">İletişim Kanalları</h4>
+                                <h4 class="text-lg font-semibold">Communication Channels</h4>
                             </div>
                             <ul class="space-y-2">
                                 ${recommendations.channels.map(channel => 
@@ -977,7 +977,7 @@
                         <div class="bg-white rounded-lg shadow-sm p-5 border-l-4 border-purple-500">
                             <div class="flex items-center mb-4">
                                 <i class="fas fa-comment-dots text-purple-500 mr-3 text-xl"></i>
-                                <h4 class="text-lg font-semibold">Mesaj Stratejisi</h4>
+                                <h4 class="text-lg font-semibold">Message Strategy</h4>
                             </div>
                             <ul class="space-y-2">
                                 ${recommendations.messages.map(message => 
@@ -993,7 +993,7 @@
                         <div class="bg-white rounded-lg shadow-sm p-5 border-l-4 border-amber-500">
                             <div class="flex items-center mb-4">
                                 <i class="fas fa-clock text-amber-500 mr-3 text-xl"></i>
-                                <h4 class="text-lg font-semibold">Zamanlama Önerileri</h4>
+                                <h4 class="text-lg font-semibold">Timing Recommendations</h4>
                             </div>
                             <ul class="space-y-2">
                                 ${recommendations.timing.map(timing => 
@@ -1009,7 +1009,7 @@
                         <div class="bg-white rounded-lg shadow-sm p-5 border-l-4 border-rose-500">
                             <div class="flex items-center mb-4">
                                 <i class="fas fa-gift text-rose-500 mr-3 text-xl"></i>
-                                <h4 class="text-lg font-semibold">Ürün Önerileri</h4>
+                                <h4 class="text-lg font-semibold">Product Recommendations</h4>
                             </div>
                             <ul class="space-y-2">
                                 ${recommendations.products.map(product => 
@@ -1030,13 +1030,13 @@
         // Helper function to generate segment names
         function generateSegmentName(segmentId) {
             const segmentNames = [
-                'Yüksek Değerli Sadık Müşteriler',
-                'Orta Değerli Düzenli Müşteriler',
-                'Yeni Potansiyel Yüksek Değerli Müşteriler',
-                'Fiyat Duyarlı Müşteriler',
-                'Yeni ve Dönemsel Müşteriler',
-                'Kaybolmaya Yüz Tutmuş Müşteriler',
-                'VIP Prestij Müşterileri'
+                'High Value Loyal Customers',
+                'Medium Value Regular Customers',
+                'New Potential High Value Customers',
+                'Price Sensitive Customers',
+                'New and Seasonal Customers',
+                'Customers at Risk of Churning',
+                'VIP Prestige Customers'
             ];
             
             return segmentId <= segmentNames.length ? 
@@ -1047,252 +1047,252 @@
         // Helper function to generate segment descriptions
         function generateSegmentDescription(segmentId) {
             const descriptions = [
-                'Sık alışveriş yapan, yüksek sepet ortalamasına sahip, markanıza sadık müşteriler.',
-                'Düzenli olarak alışveriş yapan, orta seviye harcama yapan güvenilir müşteriler.',
-                'Henüz yeni müşteriler olmalarına rağmen yüksek değer potansiyeli taşıyan kişiler.',
-                'İndirim ve promosyonlara duyarlı, fiyat odaklı alışveriş yapan müşteriler.',
-                'Henüz sadakat geliştirmemiş, dönemsel alışveriş yapan müşteriler.',
-                'Eskiden aktif olan ancak alışveriş sıklığı azalan müşteriler.',
-                'En yüksek harcama yapan, özel ilgi gösterilmesi gereken prestijli müşteriler.'
+                'Frequent shoppers with high average cart value, loyal to your brand.',
+                'Reliable customers who shop regularly and spend moderately.',
+                'New customers with high potential value despite being new.',
+                'Customers who are sensitive to discounts and promotions, shopping based on price.',
+                'Customers who shop seasonally and have not yet developed loyalty.',
+                'Previously active customers whose shopping frequency has decreased.',
+                'Top spending customers who require special attention and prestige.'
             ];
             
             return segmentId <= descriptions.length ? 
                 descriptions[segmentId - 1] : 
-                `Bu segment için açıklama henüz oluşturulmamıştır.`;
+                `Description for this segment has not been created yet.`;
         }
         
         // Helper function to generate campaign recommendations
         function generateCampaigns(segment) {
             const campaignSets = {
-                'Yüksek Değerli Sadık Müşteriler': [
-                    'VIP erken erişim programı',
-                    'Sadakat ödülleri ve özel indirimler',
-                    'Referans programı ile arkadaş davet kampanyası'
+                'High Value Loyal Customers': [
+                    'VIP early access program',
+                    'Loyalty rewards and exclusive discounts',
+                    'Referral program with invite-a-friend campaign'
                 ],
-                'Orta Değerli Düzenli Müşteriler': [
-                    'Satın alma sıklığını artıracak indirim kuponları',
-                    'Sepet değerini artırmaya yönelik kombinasyon teklifleri',
-                    'Uzun vadeli sadakat programı üyeliği'
+                'Medium Value Regular Customers': [
+                    'Discount coupons to increase purchase frequency',
+                    'Combination offers to increase cart value',
+                    'Long-term loyalty program membership'
                 ],
-                'Yeni Potansiyel Yüksek Değerli Müşteriler': [
-                    'Hoş geldin paketi ve ilk alışveriş indirimi',
-                    'Ürün keşif programı ve kişiselleştirilmiş öneriler',
-                    'Erken sadakat programı katılımı'
+                'New Potential High Value Customers': [
+                    'Welcome package and first purchase discount',
+                    'Product discovery program and personalized recommendations',
+                    'Early loyalty program participation'
                 ],
-                'Fiyat Duyarlı Müşteriler': [
-                    'Sınırlı süreli indirim fırsatları',
-                    'Miktar bazlı indirim kampanyaları',
-                    'Fiyat eşleştirme garantisi'
+                'Price Sensitive Customers': [
+                    'Limited-time discount opportunities',
+                    'Quantity-based discount campaigns',
+                    'Price matching guarantee'
                 ],
-                'Yeni ve Dönemsel Müşteriler': [
-                    'Mevsimsel özel fırsatlar',
-                    'Marka tanıtım kampanyaları',
-                    'İkinci alışverişe özel indirim'
+                'New and Seasonal Customers': [
+                    'Seasonal special offers',
+                    'Brand promotion campaigns',
+                    'Second purchase special discount'
                 ],
-                'Kaybolmaya Yüz Tutmuş Müşteriler': [
-                    'Geri dönüş indirimi kampanyası',
-                    'Yeniden aktivasyon özel teklifleri',
-                    'Sizi özledik kampanyası ve anket'
+                'Customers at Risk of Churning': [
+                    'Return discount campaign',
+                    'Reactivation special offers',
+                    'We miss you campaign and survey'
                 ],
-                'VIP Prestij Müşterileri': [
-                    'Özel davetiye ile VIP etkinlikler',
-                    'Kişiselleştirilmiş ürün ve hizmetler',
-                    'Öncelikli müşteri hizmetleri ve konsiyerj'
+                'VIP Prestige Customers': [
+                    'VIP events with exclusive invitations',
+                    'Personalized products and services',
+                    'Priority customer service and concierge'
                 ]
             };
             
             return campaignSets[segment.name] || [
-                'Kişiselleştirilmiş kampanya önerileri',
-                'Segment bazlı özel teklifler',
-                'Müşteri değerine yönelik fırsatlar'
+                'Personalized campaign suggestions',
+                'Segment-based special offers',
+                'Opportunities based on customer value'
             ];
         }
         
         // Helper function to generate channel recommendations
         function generateChannels(segment) {
             const channelSets = {
-                'Yüksek Değerli Sadık Müşteriler': [
-                    'Kişiselleştirilmiş e-posta iletişimi',
-                    'Özel müşteri temsilcisi desteği',
-                    'SMS ve mobil uygulama bildirimleri'
+                'High Value Loyal Customers': [
+                    'Personalized email communication',
+                    'Dedicated customer representative support',
+                    'SMS and mobile app notifications'
                 ],
-                'Orta Değerli Düzenli Müşteriler': [
-                    'Düzenli e-posta bültenleri',
-                    'SMS kampanya bildirimleri',
-                    'Sosyal medya reklamları'
+                'Medium Value Regular Customers': [
+                    'Regular email newsletters',
+                    'SMS campaign notifications',
+                    'Social media advertisements'
                 ],
-                'Yeni Potansiyel Yüksek Değerli Müşteriler': [
-                    'Kişiselleştirilmiş karşılama e-postaları',
-                    'Mobil uygulama bildirimleri',
-                    'Hedefli sosyal medya kampanyaları'
+                'New Potential High Value Customers': [
+                    'Personalized welcome emails',
+                    'Mobile app notifications',
+                    'Targeted social media campaigns'
                 ],
-                'Fiyat Duyarlı Müşteriler': [
-                    'İndirim odaklı e-posta kampanyaları',
-                    'SMS fırsat bildirimleri',
-                    'Fiyat karşılaştırma platformlarında reklamlar'
+                'Price Sensitive Customers': [
+                    'Discount-focused email campaigns',
+                    'SMS opportunity notifications',
+                    'Advertisements on price comparison platforms'
                 ],
-                'Yeni ve Dönemsel Müşteriler': [
-                    'Sosyal medya reklamları',
-                    'Genel e-posta pazarlama',
-                    'Retargeting kampanyaları'
+                'New and Seasonal Customers': [
+                    'Social media advertisements',
+                    'General email marketing',
+                    'Retargeting campaigns'
                 ],
-                'Kaybolmaya Yüz Tutmuş Müşteriler': [
-                    'Kişiselleştirilmiş geri dönüş e-postaları',
-                    'SMS ile özel teklifler',
-                    'Direkt posta kampanyaları'
+                'Customers at Risk of Churning': [
+                    'Personalized return emails',
+                    'Special offers via SMS',
+                    'Direct mail campaigns'
                 ],
-                'VIP Prestij Müşterileri': [
-                    'Telefon ile birebir iletişim',
-                    'Özelleştirilmiş e-posta iletişimi',
-                    'Özel davetiye ve etkinlikler'
+                'VIP Prestige Customers': [
+                    'One-on-one communication via phone',
+                    'Customized email communication',
+                    'Exclusive invitations and events'
                 ]
             };
             
             return channelSets[segment.name] || [
-                'E-posta pazarlama',
-                'Sosyal medya kampanyaları',
-                'SMS bildirimleri'
+                'Email marketing',
+                'Social media campaigns',
+                'SMS notifications'
             ];
         }
         
         // Helper function to generate messaging recommendations
         function generateMessages(segment) {
             const messageSets = {
-                'Yüksek Değerli Sadık Müşteriler': [
-                    'Ayrıcalıklı ve özel hissettiren içerik',
-                    'Yeni ürünlere erken erişim mesajları',
-                    'Sadakat ve teşekkür odaklı iletişim'
+                'High Value Loyal Customers': [
+                    'Content that makes them feel privileged and special',
+                    'Early access messages for new products',
+                    'Loyalty and gratitude-focused communication'
                 ],
-                'Orta Değerli Düzenli Müşteriler': [
-                    'Değer odaklı mesajlar',
-                    'Düzenli alışverişlerin ödüllendirilmesi',
-                    'Ürün önerileri ve koleksiyon güncellemeleri'
+                'Medium Value Regular Customers': [
+                    'Value-focused messages',
+                    'Rewarding regular purchases',
+                    'Product recommendations and collection updates'
                 ],
-                'Yeni Potansiyel Yüksek Değerli Müşteriler': [
-                    'Karşılama ve marka hikayesi',
-                    'Ürün kalitesi ve değer vurgusu',
-                    'Kişiselleştirilmiş deneyim mesajları'
+                'New Potential High Value Customers': [
+                    'Welcome and brand story',
+                    'Product quality and value emphasis',
+                    'Personalized experience messages'
                 ],
-                'Fiyat Duyarlı Müşteriler': [
-                    'Fiyat ve değer vurgusu',
-                    'Sınırlı süreli fırsat mesajları',
-                    'Tasarruf odaklı içerik'
+                'Price Sensitive Customers': [
+                    'Price and value emphasis',
+                    'Limited-time opportunity messages',
+                    'Savings-focused content'
                 ],
-                'Yeni ve Dönemsel Müşteriler': [
-                    'Marka değerleri ve tanıtım içeriği',
-                    'Mevsimsel ürün önerileri',
-                    'İlgi çekici içerik ve kampanyalar'
+                'New and Seasonal Customers': [
+                    'Brand values and promotional content',
+                    'Seasonal product recommendations',
+                    'Engaging content and campaigns'
                 ],
-                'Kaybolmaya Yüz Tutmuş Müşteriler': [
-                    'Özlem ve geri dönüş mesajları',
-                    'Kaçırılan fırsatlar ve yenilikler',
-                    'Geri bildirim talep eden içerik'
+                'Customers at Risk of Churning': [
+                    'Missing and return messages',
+                    'Missed opportunities and innovations',
+                    'Feedback-requesting content'
                 ],
-                'VIP Prestij Müşterileri': [
-                    'Premium ve lüks odaklı içerik',
-                    'Kişiselleştirilmiş özel teklif mesajları',
-                    'Ayrıcalıklı etkinlik davetiyeleri'
+                'VIP Prestige Customers': [
+                    'Premium and luxury-focused content',
+                    'Personalized special offer messages',
+                    'Exclusive event invitations'
                 ]
             };
             
             return messageSets[segment.name] || [
-                'Segment ihtiyaçlarına uygun içerik',
-                'Kişiselleştirilmiş mesajlaşma',
-                'Marka değerlerine uygun iletişim'
+                'Content tailored to segment needs',
+                'Personalized messaging',
+                'Communication aligned with brand values'
             ];
         }
         
         // Helper function to generate timing recommendations
         function generateTiming(segment) {
             const timingSets = {
-                'Yüksek Değerli Sadık Müşteriler': [
-                    'Önceki alışveriş verilerine göre kişiselleştirilmiş zamanlama',
-                    'Haftalık VIP fırsatlar ve güncellemeler',
-                    'Yeni koleksiyon lansmanından 48 saat önce bilgilendirme'
+                'High Value Loyal Customers': [
+                    'Personalized timing based on previous shopping data',
+                    'Weekly VIP opportunities and updates',
+                    'Notification 48 hours before new collection launch'
                 ],
-                'Orta Değerli Düzenli Müşteriler': [
-                    'Son alışverişten 15-20 gün sonra takip iletişimi',
-                    'İki haftada bir düzenli içerik ve fırsatlar',
-                    'Alışveriş sıklığına göre hatırlatmalar'
+                'Medium Value Regular Customers': [
+                    'Follow-up communication 15-20 days after last purchase',
+                    'Bi-weekly regular content and opportunities',
+                    'Reminders based on shopping frequency'
                 ],
-                'Yeni Potansiyel Yüksek Değerli Müşteriler': [
-                    'İlk alışveriş sonrası 3-5 gün içinde takip',
-                    'İlk ay haftalık bilgilendirme ve ürün önerileri',
-                    'İkinci alışveriş sonrası sadakat programı daveti'
+                'New Potential High Value Customers': [
+                    'Follow-up within 3-5 days after first purchase',
+                    'Weekly updates and product recommendations during the first month',
+                    'Loyalty program invitation after second purchase'
                 ],
-                'Fiyat Duyarlı Müşteriler': [
-                    'Büyük indirim dönemleri öncesi bilgilendirme',
-                    'Hafta sonu özel fırsatları',
-                    'Sezon sonu indirimler için erken erişim bildirimleri'
+                'Price Sensitive Customers': [
+                    'Notifications before major discount periods',
+                    'Weekend special opportunities',
+                    'Early access notifications for end-of-season discounts'
                 ],
-                'Yeni ve Dönemsel Müşteriler': [
-                    'Mevsim değişimlerinde özel kampanyalar',
-                    'Bayram ve özel günler öncesi hatırlatmalar',
-                    'Son alışverişten 30 gün sonra hatırlatma kampanyaları'
+                'New and Seasonal Customers': [
+                    'Special campaigns during seasonal changes',
+                    'Reminders before holidays and special days',
+                    'Reminder campaigns 30 days after last purchase'
                 ],
-                'Kaybolmaya Yüz Tutmuş Müşteriler': [
-                    'Son alışverişten 60-90 gün sonra geri dönüş kampanyası',
-                    'Özel gün ve bayramlarda hatırlatma iletişimi',
-                    'Büyük sezonluk indirim başlangıcından 24 saat önce bilgilendirme'
+                'Customers at Risk of Churning': [
+                    'Return campaign 60-90 days after last purchase',
+                    'Reminder communication during special days and holidays',
+                    'Notification 24 hours before major seasonal discount start'
                 ],
-                'VIP Prestij Müşterileri': [
-                    'Kişiselleştirilmiş özel günlerde iletişim (doğum günü, yıldönümü)',
-                    'Özel etkinliklerden 1-2 hafta önce davetiye',
-                    'Aylık VIP koleksiyon ve fırsatlar'
+                'VIP Prestige Customers': [
+                    'Personalized communication on special days (birthday, anniversary)',
+                    'Invitation 1-2 weeks before special events',
+                    'Monthly VIP collection and opportunities'
                 ]
             };
             
             return timingSets[segment.name] || [
-                'Haftalık düzenli içerik paylaşımı',
-                'Son alışverişi takip eden iletişim',
-                'Özel gün ve fırsat bildirimleri'
+                'Weekly regular content sharing',
+                'Communication following last purchase',
+                'Special day and opportunity notifications'
             ];
         }
         
         // Helper function to generate product recommendations
         function generateProducts(segment) {
             const productSets = {
-                'Yüksek Değerli Sadık Müşteriler': [
-                    'Premium ürün koleksiyonu',
-                    'Sınırlı üretim özel ürünler',
-                    'Tamamlayıcı ürün setleri ve aksesuar önerileri'
+                'High Value Loyal Customers': [
+                    'Premium product collection',
+                    'Limited production special products',
+                    'Complementary product sets and accessory recommendations'
                 ],
-                'Orta Değerli Düzenli Müşteriler': [
-                    'En çok tercih edilen ürünler',
-                    'Fiyat-performans odaklı ürünler',
-                    'Önceki alışverişlere göre tamamlayıcı ürünler'
+                'Medium Value Regular Customers': [
+                    'Most preferred products',
+                    'Price-performance focused products',
+                    'Complementary products based on previous purchases'
                 ],
-                'Yeni Potansiyel Yüksek Değerli Müşteriler': [
-                    'Tanıtıcı ürün setleri',
-                    'Giriş seviyesi premium ürünler',
-                    'En popüler ve beğenilen ürünler'
+                'New Potential High Value Customers': [
+                    'Introductory product sets',
+                    'Entry-level premium products',
+                    'Most popular and liked products'
                 ],
-                'Fiyat Duyarlı Müşteriler': [
-                    'İndirimli ürünler ve fırsatlar',
-                    'Uygun fiyatlı alternatifler',
-                    'Çoklu alım indirimleri ve ürün paketleri'
+                'Price Sensitive Customers': [
+                    'Discounted products and opportunities',
+                    'Affordable alternatives',
+                    'Bulk purchase discounts and product packages'
                 ],
-                'Yeni ve Dönemsel Müşteriler': [
-                    'Sezona özel ürünler',
-                    'Trend ve yeni koleksiyon ürünleri',
-                    'Giriş seviyesi ürünler'
+                'New and Seasonal Customers': [
+                    'Seasonal special products',
+                    'Trend and new collection products',
+                    'Entry-level products'
                 ],
-                'Kaybolmaya Yüz Tutmuş Müşteriler': [
-                    'Önceki satın alımlarla ilgili yeni versiyonlar',
-                    'Özel indirimli ürünler',
-                    'Yeniden giriş fırsatları ve paketleri'
+                'Customers at Risk of Churning': [
+                    'New versions related to previous purchases',
+                    'Special discounted products',
+                    'Re-entry opportunities and packages'
                 ],
-                'VIP Prestij Müşterileri': [
-                    'Özel tasarım ve kişiselleştirilmiş ürünler',
-                    'Koleksiyon parçaları ve lüks ürünler',
-                    'Ön sipariş ve özel üretim fırsatları'
+                'VIP Prestige Customers': [
+                    'Special design and personalized products',
+                    'Collection pieces and luxury products',
+                    'Pre-order and special production opportunities'
                 ]
             };
             
             return productSets[segment.name] || [
-                'Müşteri profiline uygun ürünler',
-                'Tamamlayıcı ürün önerileri',
-                'En popüler ürünler'
+                'Products suitable for customer profile',
+                'Complementary product recommendations',
+                'Most popular products'
             ];
         }
         
